@@ -1,7 +1,24 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
+<h2>Active Listings</h2>
+<ul>
+{% for listing in listings %}
+    <li>
+        <h3>{{ listing.title }}</h3>
+        <p>{{ listing.description }}</p>
+        <p>Current Price: {{ listing.current_price }}</p>
+        <a href="{% url 'listing' listing.id %}">View Listing</a>
+    </li>
+{% empty %}
+    <li>No active listings available.</li>
+{% endfor %}
+</ul>
 
-    TODO
+    <a href="{% url 'create_listing' %}" class="btn btn-primary">Create a new listing</a>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'watchlist' %}">My Watchlist</a>
+    {% endif %}
+
 {% endblock %}

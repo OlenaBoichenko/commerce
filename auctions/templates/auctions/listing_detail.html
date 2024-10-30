@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{ listing.title }}</h2>
+    <p>{{ listing.description }}</p>
+    <p>Current Price: ${{ listing.current_price }}</p>
+    {% if listing.image_url %}
+        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+    {% endif %}
+    <p>Category: {{ listing.category }}</p>
+    <p>Created at: {{ listing.created_at }}</p>
+
+    {% if user.is_authenticated %}
+        {% if is_in_watchlist %}
+            <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger">Remove from Watchlist</a>
+        {% else %}
+            <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary">Add to Watchlist</a>
+        {% endif %}
+    {% endif %}
+
+    <a href="{% url 'index' %}">Back to Listings</a>
+{% endblock %}
+
