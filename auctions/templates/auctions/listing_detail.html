@@ -10,21 +10,38 @@
     <p>Category: {{ listing.category }}</p>
     <p>Created at: {{ listing.created_at }}</p>
 
+    {% if not listing.is_active %}
+        <h4 class="text-warning">This auction is closed.</h4>
+        {% if is_winner %}
+            <p class="text-success">Congratulations! You have won this auction with a bid of ${{ current_bid }}.</p>
+        {% endif %}
+    {% endif %}
+
     {% if user.is_authenticated %}
-        {% if is_in_watchlist %}
-            <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger">Remove from Watchlist</a>
-        {% else %}
-            <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary">Add to Watchlist</a>
+        {% if listing.is_active %}
+            {% if is_in_watchlist %}
+                <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger">Remove from Watchlist</a>
+            {% else %}
+                <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary">Add to Watchlist</a>
+            {% endif %}
+
+            <h3>Place a Bid</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Place Bid</button>
+            </form>
         {% endif %}
 
-        <h3>Place a Bid</h3>
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_p }}  <!-- Здесь отображается поле для ввода ставки -->
-            <button type="submit" class="btn btn-success">Place Bid</button>
-        </form>
+        <!-- Кнопка для закрытия аукциона видна только владельцу объявления, если аукцион активен -->
+        {% if user == listing.owner and listing.is_active %}
+            <form method="POST" action="{% url 'close_auction' listing.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning">Close Auction</button>
+            </form>
+        {% endif %}
 
-        <!-- Отображение сообщений об ошибках или успешной операции -->
+        <!-- Сообщения об ошибках или успешной операции -->
         {% if messages %}
             <div>
                 {% for message in messages %}

@@ -1,0 +1,34 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Your Participated Listings</h2>
+    <ul>
+    {% for data in listings_data %}
+        <li>
+            <h3>{{ data.listing.title }}</h3>
+            <p>{{ data.listing.description }}</p>
+            <p>Current Bid: ${{ data.listing.current_price }}</p>
+            {% if data.listing.image_url %}
+                <img src="{{ data.listing.image_url }}" alt="{{ data.listing.title }}">
+            {% endif %}
+            <p>Category: {{ data.listing.category }}</p>
+            <p>Created at: {{ data.listing.created_at }}</p>
+            
+            {% if not data.listing.is_active %}
+                <h4 class="text-warning">This auction is closed.</h4>
+                {% if data.is_winner %}
+                    <p class="text-success">Congratulations! You have won this auction with a bid of ${{ data.highest_bid.bid_amount }}.</p>
+                {% else %}
+                    <p class="text-info">This auction is closed and you did not win.</p>
+                {% endif %}
+            {% else %}
+                <p class="text-primary">This auction is still active.</p>
+            {% endif %}
+
+            <a href="{% url 'listing' data.listing.id %}" class="btn btn-info">View Listing</a>
+        </li>
+    {% empty %}
+        <li>You have not participated in any auctions yet.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}

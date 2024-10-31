@@ -12,4 +12,6 @@ urlpatterns = [
     path("listing/<int:id>/add_to_watchlist/", views.add_to_watchlist, name="add_to_watchlist"),  # Добавление в избранное
     path("listing/<int:id>/remove_from_watchlist/", views.remove_from_watchlist, name="remove_from_watchlist"),  # Удаление из избранного
     path("watchlist/", views.watchlist, name="watchlist"),  # Страница избранного (Watchlist Page)
+    path("listing/<int:id>/close_auction/", views.close_auction, name="close_auction"),
+    path("profile/", views.user_profile, name="user_profile"),  # Страница профиля пользователя
 ]
