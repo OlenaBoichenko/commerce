@@ -2,11 +2,15 @@
 
 {% block body %}
 <h2>Active Listings</h2>
+<div class="listing">
 <ul>
 {% for listing in listings %}
     <li>
         <h3>{{ listing.title }}</h3>
         <p>{{ listing.description }}</p>
+        {% if listing.image_url %}
+        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+    {% endif %}
         <p>Current Price: {{ listing.current_price }}</p>
         <a href="{% url 'listing' listing.id %}">View Listing</a>
     </li>
@@ -14,7 +18,7 @@
     <li>No active listings available.</li>
 {% endfor %}
 </ul>
-
+</div>
     <a href="{% url 'create_listing' %}" class="btn btn-primary">Create a new listing</a>
 
     {% if user.is_authenticated %}
