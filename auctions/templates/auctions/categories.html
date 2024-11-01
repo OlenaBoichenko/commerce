@@ -1,0 +1,30 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2 class="mb-4">Categories</h2>
+
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title text-primary">{{ category.category }}</h5>
+                        <p class="card-text">{{ category.count }} active listings</p>
+                        <a href="{% url 'category_listings' category.category %}" class="btn btn-primary mt-3">View Listings in this Category</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">
+                <div class="alert alert-warning" role="alert">
+                    No categories available.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'index' %}" class="btn btn-secondary mt-4">Back to Listings</a>
+</div>
+{% endblock %}
+

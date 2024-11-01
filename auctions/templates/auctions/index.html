@@ -1,28 +1,38 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Active Listings</h2>
+<div class="container mt-4">
+    <h2 class="mb-4">Active Listings</h2>
 
-<ul>
-{% for listing in listings %}
-    <li>
-        <h3>{{ listing.title }}</h3>
-        <p>{{ listing.description }}</p>
-        {% if listing.image_url %}
-        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
-    {% endif %}
-        <p>Current Price: {{ listing.current_price }}</p>
-        <a href="{% url 'listing' listing.id %}">View Listing</a>
-    </li>
-{% empty %}
-    <li>No active listings available.</li>
-{% endfor %}
-</ul>
+    <div class="row">
+        {% for listing in listings %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    {% if listing.image_url %}
+                        <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="card-img-top img-fluid">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ listing.title }}</h5>
+                        <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
+                        <p class="card-text"><strong>Current Price:</strong> ${{ listing.current_price }}</p>
+                        <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-md-12">
+                <div class="alert alert-warning" role="alert">
+                    No active listings available.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
-    <a href="{% url 'create_listing' %}" class="btn btn-primary">Create a new listing</a>
-
-    {% if user.is_authenticated %}
-        <a href="{% url 'watchlist' %}">My Watchlist</a>
-    {% endif %}
-
+    <div class="mt-4">
+        <a href="{% url 'create_listing' %}" class="btn btn-success">Create a New Listing</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'watchlist' %}" class="btn btn-secondary ml-2">My Watchlist</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

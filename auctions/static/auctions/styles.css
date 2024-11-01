@@ -2,11 +2,10 @@ body {
   padding: 10px;
 }
 
-ul {
-  list-style-type: none;
+img {
+  width: 250px;
+}
+
+.watch_btn {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  row-gap: 15px;
-  column-gap: 15px;
 }

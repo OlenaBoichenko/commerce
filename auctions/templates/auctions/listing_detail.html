@@ -1,57 +1,119 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>{{ listing.title }}</h2>
-    <p>{{ listing.description }}</p>
-    <p>Current Bid: ${{ current_bid }}</p> <!-- Отображение текущей ставки -->
-    {% if listing.image_url %}
-        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
-    {% endif %}
-    <p>Category: {{ listing.category }}</p>
-    <p>Created at: {{ listing.created_at }}</p>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-3">{{ listing.title }}</h2>
+            <p><strong>Description:</strong> {{ listing.description }}</p>
+            <p><strong>Current Bid:</strong> ${{ current_bid }}</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            {% if listing.image_url %}
+                <img src="{{ listing.image_url }}" alt="{{ listing.title }}" class="img-fluid rounded mb-3">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <p><strong>Category:</strong> {{ listing.category }}</p>
+            <p><strong>Created at:</strong> {{ listing.created_at }}</p>
 
-    {% if not listing.is_active %}
-        <h4 class="text-warning">This auction is closed.</h4>
-        {% if is_winner %}
-            <p class="text-success">Congratulations! You have won this auction with a bid of ${{ current_bid }}.</p>
-        {% endif %}
+            {% if not listing.is_active %}
+                <div class="alert alert-warning" role="alert">
+                    This auction is closed.
+                </div>
+                {% if is_winner %}
+                    <div class="alert alert-success" role="alert">
+                        Congratulations! You have won this auction with a bid of ${{ current_bid }}.
+                    </div>
+                {% endif %}
+            {% endif %}
+
+
+            {% if user.is_authenticated and listing.is_active %}
+                {% if is_in_watchlist %}
+                    <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger mb-3">Remove from Watchlist</a>
+                {% else %}
+                    <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary mb-3">Add to Watchlist</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user.is_authenticated and listing.is_active %}
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h3>Place a Bid</h3>
+                <form method="POST" class="form-inline">
+                    {% csrf_token %}
+                    <div class="form-group mb-2 mr-2">
+                        {{ form.bid_amount.label_tag }}
+                        {{ form.bid_amount }}
+                    </div>
+                    <button type="submit" class="btn btn-success mb-2" name="place_bid">Place Bid</button>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if user.is_authenticated and user == listing.owner and listing.is_active %}
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <form method="POST" action="{% url 'close_auction' listing.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">Close Auction</button>
+                </form>
+            </div>
+        </div>
     {% endif %}
 
     {% if user.is_authenticated %}
-        {% if listing.is_active %}
-            {% if is_in_watchlist %}
-                <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger">Remove from Watchlist</a>
-            {% else %}
-                <a href="{% url 'add_to_watchlist' listing.id %}" class="btn btn-primary">Add to Watchlist</a>
-            {% endif %}
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h3>Add a Comment</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button type="submit" class="btn btn-primary" name="add_comment">Add Comment</button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <p><a href="{% url 'login' %}">Log in</a> to place a bid or add a comment.</p>
+    {% endif %}
 
-            <h3>Place a Bid</h3>
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-success">Place Bid</button>
-            </form>
-        {% endif %}
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h3>Comments</h3>
+            <ul class="list-group">
+                {% for comment in comments %}
+                    <li class="list-group-item">
+                        <strong>{{ comment.user.username }}</strong>: {{ comment.content }} <br>
+                        <small class="text-muted">Posted on {{ comment.created_at }}</small>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No comments yet. Be the first to comment!</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
-        <!-- Кнопка для закрытия аукциона видна только владельцу объявления, если аукцион активен -->
-        {% if user == listing.owner and listing.is_active %}
-            <form method="POST" action="{% url 'close_auction' listing.id %}">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-warning">Close Auction</button>
-            </form>
-        {% endif %}
-
-        <!-- Сообщения об ошибках или успешной операции -->
-        {% if messages %}
-            <div>
+    {% if messages %}
+        <div class="row mb-4">
+            <div class="col-md-8">
                 {% for message in messages %}
                     <div class="alert {{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             </div>
-        {% endif %}
-    {% else %}
-        <p><a href="{% url 'login' %}">Log in</a> to place a bid.</p>
+        </div>
     {% endif %}
 
-    <a href="{% url 'index' %}">Back to Listings</a>
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'index' %}" class="btn btn-secondary">Back to Listings</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

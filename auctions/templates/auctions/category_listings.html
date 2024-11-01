@@ -2,10 +2,10 @@
 
 {% block body %}
 <div class="container mt-4">
-    <h2 class="mb-4">My Watchlist</h2>
+    <h2 class="mb-4">Listings in Category: <span class="text-primary">{{ category_name }}</span></h2>
 
     <div class="row">
-        {% for listing in watchlist_items %}
+        {% for listing in listings %}
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card shadow-sm h-100">
                     {% if listing.image_url %}
@@ -14,24 +14,21 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ listing.title }}</h5>
                         <p class="card-text">{{ listing.description|truncatewords:20 }}</p>
-                        <p class="card-text"><strong>Current Price:</strong> ${{ listing.current_price }}</p>
-                        <div class="watch_btn">
+                        <p class="card-text"><strong>Current Bid:</strong> ${{ listing.current_price }}</p>
                         <a href="{% url 'listing' listing.id %}" class="btn btn-primary">View Listing</a>
-                        <a href="{% url 'remove_from_watchlist' listing.id %}" class="btn btn-danger ml-2">Remove from Watchlist</a>
-                        </div>
                     </div>
                 </div>
             </div>
         {% empty %}
             <div class="col-md-12">
                 <div class="alert alert-warning" role="alert">
-                    No items in your Watchlist.
+                    No active listings available in this category.
                 </div>
             </div>
         {% endfor %}
     </div>
 
-    <a href="{% url 'index' %}" class="btn btn-secondary mt-4">Back to Listings</a>
+    <a href="{% url 'categories' %}" class="btn btn-secondary mt-4">Back to Categories</a>
 </div>
 {% endblock %}
 

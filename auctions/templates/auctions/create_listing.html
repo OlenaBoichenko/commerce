@@ -1,11 +1,18 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>Создать новое объявление</h2>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}  <!-- Отображение формы -->
-    <button type="submit">Создать</button>
-</form>
-<a href="{% url 'index' %}">Назад к объявлениям</a>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Create a New Listing</h2>
+            <form method="POST" enctype="multipart/form-data" class="border p-4 rounded shadow-sm">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success mt-3">Create Listing</button>
+            </form>
+            <a href="{% url 'index' %}" class="btn btn-secondary mt-3">Back to Listings</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
