@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from .form import ListingForm, BidForm, CommentForm
-from .models import Listing, Bid, Comment
+from .models import Listing, Bid
 from django.contrib import messages
 from .models import User
 from django.db.models import Count
